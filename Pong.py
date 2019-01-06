@@ -3,10 +3,9 @@ import tkinter
 from tkinter import Frame, BOTH, Canvas
 
 
-#By Caleb Robinson
 class Pong(Frame): # les coordonnées inscrites ci-dessous permettent de déterminer la position de la balle
     player1 = 0    # des deux joueurs, ainsi que du score de départ qui sera réutilisé dans le programme
-    player2 = 0    #
+    player2 = 0    # mais auusi la vitesse de la balle que l'on peut changer à volonté 
     ballX=50
     ballY=50
     ball = 0
