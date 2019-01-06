@@ -1,137 +1,123 @@
-#!/usr/bin/python
-# -*- coding: UTF-8 -*-
 
-from Tkinter import *
-from random import randint
-
-class Fenetre(Tk):
-    def __init__(self, width=600, height=400):
-        Tk.__init__(self)
-        self.flag = 0
-        
-        self.quit= Button(self,text="Quit Game",command=self.destroy)
-        self.quit.grid(column=4,row=0,sticky="NE")
-
-        self.new= Button(self,text="New Game",command=self.new_game)
-        self.new.grid(column=0,row=0,sticky="NW")
-
-  
-        self.can = Canvas(self,width=width,height=height,bg="black")
-        self.can.grid(column=0,row=1,sticky="SW",columnspan=5)
-             
-    def new_game(self):
-        if self.flag == 0 :
-            self.flag=1
-            self.pads = Pad(self.can,self.flag)
-            self.ball = Ball(self.can,self.pads,self.flag)
-
-class Pad:
-    def __init__(self,canvas,flag):
-        self.canvas = canvas
-        self.flag = flag
-        self.height = canvas.winfo_height()
-        self.width = canvas.winfo_width()
-        self.x1,self.y1 = 10,self.height/2-30
-        self.x2,self.y2 = self.width-25,self.height/2-30
-                
-        self.Pad1 = canvas.create_rectangle(self.x1,self.y1,self.x1+15,self.y1+60,fill="white")
-        self.Pad2 = canvas.create_rectangle(self.x2,self.y2,self.x2+15,self.y2+60,fill="white")
-
-        canvas.bind_all("<Up>",self.mouv_up)
-        canvas.bind_all("<Down>", self.mouv_down)
-        self.dy2 = 25
-        self.ia()
-
-    def mouv_up(self,event):
-        if self.y1>5 :
-            self.y1=self.y1-10
-            self.canvas.coords(self.Pad1,self.x1,self.y1,self.x1+15,self.y1+60)
-            
-    def mouv_down(self,event):
-        if self.y1+60<(self.height-5):
-            self.y1=self.y1+10
-            self.canvas.coords(self.Pad1,self.x1,self.y1,self.x1+15,self.y1+60)
-
-    def ia (self):
-        self.y2=self.y2 + self.dy2
-        if self.y2+60 > self.height-10 :
-            self.dy2=-50
-            
-        if self.y2 < 5 :
-            self.dy2=50
-            
-        self.canvas.coords(self.Pad2,self.x2,self.y2,self.x2+15,self.y2+60)
-        if self.flag > 0:
-            self.canvas.after(70,self.ia)
+import tkinter
+from tkinter import Frame, BOTH, Canvas
 
 
-class Ball:
-    def __init__(self,canvas,pad,flag):
-        self.canvas = canvas
-        self.pad = pad
-        self.height = canvas.winfo_height()
-        self.width = canvas.winfo_width()
-        self.flag = flag
-        self.x1,self.y1 = self.width/2,self.height/2
-        self.dx,self.dy = 30,30
-        self.Ball = canvas.create_oval(self.x1, self.y1, self.x1+25, self.y1+25, width=2, fill='white')
-        self.pointA, self.pointB = 0,0
-        
-        self.ready()
+#By Caleb Robinson
+class Pong(Frame):
+    player1 = 0
+    player2 = 0
+    ballX=50
+    ballY=50
+    ball = 0
+    paddle1 = 0
+    paddle2 = 0
+    paddle1X = 2
+    paddle1Y = 2
+    paddle2X = 0
+    paddle2Y = 2
+    canvas = 0
+    ballDX = 2
+    ballDY = -2
+    winHEIGHT = 0;
+    winWIDTH = 0;
+    paddleSpeed = 15
+    player1Points = 0
+    player2Points = 0
+    textLabel = 0
     
-    def ready(self):
-        self.starter=0
-        self.score= Label(app,text="%d : %d" % (self.pointA,self.pointB), bg="black",fg="white")
-        self.score.grid(column =2,row=0,sticky="S")
-        self.x1,self.y1 = self.height/2,self.width/2
-        app.titre = Label(app,text="PRESS ANY KEY TO START", bg="black",fg="white")
-        app.titre.grid(column =2,row=2,sticky="S")
-        self.canvas.bind_all("<Key>",self.start)
-       
+    def __init__(self, parent):
+        Frame.__init__(self, parent)   
+        self.parent = parent        
+        self.initUI()
 
-    def start(self,event):
-        self.starter=1
-        self.move()  
+    def key(self, event):
+        global player1,player2
+        print('pressed'), repr(event.char)
+        if event.char == 'z':
+            if self.canvas.coords(self.paddle1)[1]>=0:
+                self.canvas.move(self.paddle1,0,-self.paddleSpeed)
+        if event.char == 's':
+            if self.canvas.coords(self.paddle1)[3]<=self.winHEIGHT:
+                self.canvas.move(self.paddle1,0,self.paddleSpeed)
+        if event.char == 'o':
+            if self.canvas.coords(self.paddle2)[1]>=0:
+                self.canvas.move(self.paddle2,0,-self.paddleSpeed)
+        if event.char == 'l':
+            if self.canvas.coords(self.paddle2)[3]<=self.winHEIGHT:
+                self.canvas.move(self.paddle2,0,self.paddleSpeed)
+        if event.char == 'q':
+            self.parent.destroy()
+
+    def callback(self, event):
+        self.focus_set()
+        print("clicked at"), event.x, event.y
+
+    def motion(self, event):
+        coords1 = self.canvas.coords(self.paddle1)
+        height1 = coords1[3]-coords1[1]
+        coords1[1] = event.y
+        coords1[3] = event.y+height1
+        self.canvas.coords(self.paddle1,coords1[0],coords1[1],coords1[2],coords1[3])
         
-    def move(self):
-        if self.starter==1:
-            self.x1, self.y1 = self.x1 +self.dx, self.y1 + self.dy
-                 
-            if self.y1 >self.height-26:
-                self.dx, self.dy = self.dx, -20
+    def initUI(self):
 
-            if self.y1 <2:
-                self.dx, self.dy = self.dx, 20
-       
-            if self.x1 < self.pad.x1+20:
-                if self.pad.y1 < self.y1 < self.pad.y1+60:
-                    self.dx, self.dy = 20, self.dy
-
-            if self.x1+30 >  self.pad.x2-1:
-                if self.pad.y2<self.y1+12.5<self.pad.y2+60:
-                     self.dx, self.dy = -20, self.dy
-
-            if self.x1 < 0:
-                self.starter = 0
-                self.pointB = self.pointB+1
-                self.ready()
-            
-        
-            if self.x1+25 > self.width:
-                self.starter=0
-                self.pointA = self.pointA+1
-                self.ready()
-
-            self.canvas.coords(self.Ball,self.x1,self.y1,self.x1+30,self.y1+30)
-            if self.flag > 0:
-                self.canvas.after(70,self.move)
-
+        self.paddle2X = self.parent.winfo_screenwidth() - 15
+        self.parent.title("Pong")        
+        self.pack(fill=BOTH, expand=1)
+        self.canvas = Canvas(self)
+        self.canvas.pack(fill=BOTH, expand=1)
+        self.winHEIGHT = self.parent.winfo_screenheight()
+        self.winWIDTH = self.parent.winfo_screenwidth()
+        self.ball = self.canvas.create_oval(0+self.ballX, 0+self.ballY, 10+self.ballX, 10+self.ballY, outline="black", 
+            fill="red", width=1)
+        self.paddle1 = self.canvas.create_rectangle(0+self.paddle1X, 0+self.paddle1Y, 10+self.paddle1X, 50+self.paddle1Y, outline="#fb0", fill="#fb0")
+        self.paddle2 = self.canvas.create_rectangle(0+self.paddle2X, 0+self.paddle2Y, 10+self.paddle2X, 50++self.paddle2Y, outline="#fb0", fill="#fb0")
+        self.textLabel = self.canvas.create_text(self.winWIDTH/2,10, text=str(self.player1Points)+" | "+str(self.player2Points))
+        self.parent.bind("<Key>", self.key)
+        self.parent.bind("<Button-1>", self.callback)
+        self.parent.bind("<Motion>", self.motion)
+        self.canvas.pack(fill=BOTH, expand=1)
+        self.after(200, self.doMove)
         
 
+    def doCollide(self,coords1,coords2):
+        height1 = coords1[3]-coords1[1]
+        width1 = coords1[2]-coords1[0]
+        height2 = coords2[3]-coords2[1]
+        width2 = coords2[2]-coords2[0]
+        return not (coords1[0] + width1 < coords2[0] or coords1[1] + height1 < coords2[1] or coords1[0] > coords2[0] + width2 or coords1[1] > coords2[1] + height2)
 
-if __name__ == "__main__":
-    app = Fenetre()
-    app.mainloop()
+    def doMove(self):
+        self.canvas.move(self.ball,self.ballDX, self.ballDY)
+        if self.canvas.coords(self.ball)[1] <= 0:
+            self.ballDY = -self.ballDY
+        if self.canvas.coords(self.ball)[3] >= self.winHEIGHT:
+            self.ballDY = -self.ballDY
+        if self.doCollide(self.canvas.coords(self.ball),self.canvas.coords(self.paddle1)) or self.doCollide(self.canvas.coords(self.ball),self.canvas.coords(self.paddle2)):
+            self.ballDX = -self.ballDX
+        if self.canvas.coords(self.ball)[0] <= 0:
+            self.ballDX = -self.ballDX
+            self.player2Points+=1
+            self.canvas.delete(self.textLabel)
+            self.textLabel = self.canvas.create_text(self.winWIDTH/2,10, text=str(self.player1Points)+" | "+str(self.player2Points))
+            self.canvas.coords(self.ball,self.winWIDTH/2,self.winHEIGHT/2,self.winWIDTH/2+10,self.winHEIGHT/2+10)
+        if self.canvas.coords(self.ball)[2] >= self.winWIDTH:
+            self.ballDX = -self.ballDX
+            self.player1Points+=1
+            self.canvas.delete(self.textLabel)
+            self.textLabel = self.canvas.create_text(self.winWIDTH/2,10, text=str(self.player1Points)+" | "+str(self.player2Points))
+            self.canvas.coords(self.ball,self.winWIDTH/2,self.winHEIGHT/2,self.winWIDTH/2+10,self.winHEIGHT/2+10)
+        self.after(10, self.doMove)
+
+def main():
+  
+    root = tkinter.Tk()
+    ex = Pong(root)
+    root.overrideredirect(True)
+    root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
+    root.mainloop()  
 
 
-
+if __name__ == '__main__':
+    main()  
