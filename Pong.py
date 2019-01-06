@@ -16,8 +16,8 @@ class Pong(Frame): # les coordonnées inscrites ci-dessous permettent de déterm
     paddle2X = 0
     paddle2Y = 2
     canvas = 0
-    ballDX = 2
-    ballDY = -2
+    ballDX = 1
+    ballDY = -1
     winHEIGHT = 0;
     winWIDTH = 0;
     paddleSpeed = 30
@@ -52,14 +52,14 @@ class Pong(Frame): # les coordonnées inscrites ci-dessous permettent de déterm
         self.focus_set()
         print("clicked at"), event.x, event.y
 
-    def motion(self, event):
+    def motion(self, event): # mouvement du paddle
         coords1 = self.canvas.coords(self.paddle1)
         height1 = coords1[3]-coords1[1]
         coords1[1] = event.y
         coords1[3] = event.y+height1
         self.canvas.coords(self.paddle1,coords1[0],coords1[1],coords1[2],coords1[3])
         
-    def initUI(self):
+    def initUI(self): # création des pads joueurs 
 
         self.paddle2X = self.parent.winfo_screenwidth() - 15
         self.parent.title("Pong")        
