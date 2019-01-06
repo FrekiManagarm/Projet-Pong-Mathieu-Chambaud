@@ -5,7 +5,7 @@ from tkinter import Frame, BOTH, Canvas
 
 class Pong(Frame): # les coordonnées inscrites ci-dessous permettent de déterminer la position de la balle
     player1 = 0    # des deux joueurs, ainsi que du score de départ qui sera réutilisé dans le programme
-    player2 = 0    # mais auusi la vitesse de la balle que l'on peut changer à volonté 
+    player2 = 0    # mais auusi la vitesse de la balle que l'on peut changer à volonté :)
     ballX=50
     ballY=50
     ball = 0
@@ -87,7 +87,7 @@ class Pong(Frame): # les coordonnées inscrites ci-dessous permettent de déterm
         width2 = coords2[2]-coords2[0]
         return not (coords1[0] + width1 < coords2[0] or coords1[1] + height1 < coords2[1] or coords1[0] > coords2[0] + width2 or coords1[1] > coords2[1] + height2)
 
-    def doMove(self): # cette partie est la trajectoire de la balle 
+    def doMove(self): # cette partie est la trajectoire de la balle et la distribution des points
         self.canvas.move(self.ball,self.ballDX, self.ballDY)
         if self.canvas.coords(self.ball)[1] <= 0:
             self.ballDY = -self.ballDY
@@ -112,11 +112,11 @@ class Pong(Frame): # les coordonnées inscrites ci-dessous permettent de déterm
 def main(): # et cette partie permet de créer la fenêtre du jeu qui prend la taille de l'écran
   
     root = tkinter.Tk()
-    ex = Pong(root)
+    ex = Pong(root) # réinitialisation du Pong 
     root.overrideredirect(True)
     root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
     root.mainloop()  
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': 
     main()  
