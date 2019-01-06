@@ -16,11 +16,11 @@ class Pong(Frame): # les coordonnées inscrites ci-dessous permettent de déterm
     paddle2X = 0
     paddle2Y = 2
     canvas = 0
-    ballDX = 1
-    ballDY = -1
+    ballDX = 2
+    ballDY = -2
     winHEIGHT = 0;
     winWIDTH = 0;
-    paddleSpeed = 30
+    paddleSpeed = 40
     player1Points = 0
     player2Points = 0
     textLabel = 0
