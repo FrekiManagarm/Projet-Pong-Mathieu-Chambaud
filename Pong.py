@@ -4,15 +4,15 @@ from tkinter import Frame, BOTH, Canvas
 
 
 #By Caleb Robinson
-class Pong(Frame):
-    player1 = 0
-    player2 = 0
+class Pong(Frame): # les coordonnées inscrites ci-dessous permettent de déterminer la position de la balle
+    player1 = 0    # des deux joueurs, ainsi que du score de départ qui sera réutilisé dans le programme
+    player2 = 0    #
     ballX=50
     ballY=50
     ball = 0
     paddle1 = 0
     paddle2 = 0
-    paddle1X = 2
+    paddle1X = 4 
     paddle1Y = 2
     paddle2X = 0
     paddle2Y = 2
@@ -21,7 +21,7 @@ class Pong(Frame):
     ballDY = -2
     winHEIGHT = 0;
     winWIDTH = 0;
-    paddleSpeed = 15
+    paddleSpeed = 30
     player1Points = 0
     player2Points = 0
     textLabel = 0
@@ -31,7 +31,7 @@ class Pong(Frame):
         self.parent = parent        
         self.initUI()
 
-    def key(self, event):
+    def key(self, event): # cette partie permet d'attribuer les touches 
         global player1,player2
         print('pressed'), repr(event.char)
         if event.char == 'z':
@@ -46,7 +46,7 @@ class Pong(Frame):
         if event.char == 'l':
             if self.canvas.coords(self.paddle2)[3]<=self.winHEIGHT:
                 self.canvas.move(self.paddle2,0,self.paddleSpeed)
-        if event.char == 'q':
+        if event.char == 'q': # cette touche permet de quitter le jeu en cours 
             self.parent.destroy()
 
     def callback(self, event):
@@ -81,14 +81,14 @@ class Pong(Frame):
         self.after(200, self.doMove)
         
 
-    def doCollide(self,coords1,coords2):
+    def doCollide(self,coords1,coords2): # cette partie permet à la balle de rentrer  en collision avec les deux plateformes des joueurs
         height1 = coords1[3]-coords1[1]
         width1 = coords1[2]-coords1[0]
         height2 = coords2[3]-coords2[1]
         width2 = coords2[2]-coords2[0]
         return not (coords1[0] + width1 < coords2[0] or coords1[1] + height1 < coords2[1] or coords1[0] > coords2[0] + width2 or coords1[1] > coords2[1] + height2)
 
-    def doMove(self):
+    def doMove(self): # cette partie est la trajectoire de la balle 
         self.canvas.move(self.ball,self.ballDX, self.ballDY)
         if self.canvas.coords(self.ball)[1] <= 0:
             self.ballDY = -self.ballDY
@@ -110,7 +110,7 @@ class Pong(Frame):
             self.canvas.coords(self.ball,self.winWIDTH/2,self.winHEIGHT/2,self.winWIDTH/2+10,self.winHEIGHT/2+10)
         self.after(10, self.doMove)
 
-def main():
+def main(): # et cette partie permet de créer la fenêtre du jeu qui prend la taille de l'écran
   
     root = tkinter.Tk()
     ex = Pong(root)
